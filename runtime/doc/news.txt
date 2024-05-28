@@ -192,8 +192,10 @@ The following new features were added.
   • 'shortmess' includes the "C" flag.
   • 'grepprg' uses the -H and -I flags for grep by default,
     and defaults to using ripgrep if available.
-  • "]d" and "[d" in Normal mode map to |vim.diagnostic.goto_next()| and
-    |vim.diagnostic.goto_prev()|, respectively. |]d-default| |[d-default|
+  • "]d" and "[d" in Normal mode map to |vim.diagnostic.jump()|.
+  • |]d-default| and |[d-default| accept a count.
+  • |[D-default| and |]D-default| jump to the first and last diagnostic in the
+    current buffer, respectively.
   • <C-W>d (and <C-W><C-D>) map to |vim.diagnostic.open_float()|
     |CTRL-W_d-default|
   • |vim.lsp.start()| sets the following default keymaps (assuming server
