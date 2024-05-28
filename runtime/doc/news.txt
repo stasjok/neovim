@@ -430,6 +430,8 @@ These existing features changed their behavior.
     deprecated.
   • |vim.diagnostic.config()| now accepts a function for the virtual_text.prefix
     option, which allows for rendering e.g., diagnostic severities differently.
+  • |vim.diagnostic.config()| accepts a "jump" table to specify defaults for
+    |vim.diagnostic.jump()|.
 
 • Options:
   • Attempting to set an invalid keycode option (e.g. `set t_foo=123`) no
