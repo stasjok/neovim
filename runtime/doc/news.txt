@@ -349,6 +349,8 @@ The following new features were added.
     process emits an OSC or DCS control sequence.
   • Terminal buffers respond to OSC background and foreground requests.
     |default-autocmds|
+  • The |terminal| now understands the OSC 52 escape sequence to write to the
+    system clipboard (copy). Querying with OSC 52 (paste) is not supported.
 
 • Treesitter:
   • Bundled parsers and queries (highlight, folds) for Markdown (used for LSP
