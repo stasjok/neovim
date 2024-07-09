@@ -1158,6 +1158,8 @@ end
 --- Move to the previous diagnostic in the current buffer.
 ---@param opts? vim.diagnostic.JumpOpts
 function M.goto_prev(opts)
+  opts = opts or {}
+  opts.float = if_nil(opts.float, true)
   goto_diagnostic(M.get_prev(opts), opts)
 end
 
@@ -1297,6 +1299,8 @@ end
 ---
 ---@param opts? vim.diagnostic.JumpOpts
 function M.goto_next(opts)
+  opts = opts or {}
+  opts.float = if_nil(opts.float, true)
   goto_diagnostic(M.get_next(opts), opts)
 end
 
