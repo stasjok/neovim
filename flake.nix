@@ -194,6 +194,7 @@
                 srcPrerelease = getValue "NVIM_VERSION_PRERELEASE";
               in
                 lib.optionalString (srcPrerelease != "") (srcPrerelease
+                  + lib.optionalString (self ? shortRev) "+${self.shortRev}"
                   + lib.optionalString (self ? dirtyShortRev) "+${self.dirtyShortRev}");
             in {
               version = "${major}.${minor}.${patch}${prerelease}";
