@@ -379,6 +379,8 @@ The following new features were added.
     node emit a hyperlink. Hyperlinks are UI specific: in the TUI, the OSC 8
     control sequence is used.
   • Improved error messages for query parsing.
+  • |LanguageTree:node_for_range()| gets anonymous and named nodes for a
+    range.
 
 • TUI:
   • Builtin TUI can now recognize "super" (|<D-|) and "meta" (|<T-|) modifiers
