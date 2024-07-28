@@ -381,6 +381,8 @@ The following new features were added.
   • Improved error messages for query parsing.
   • |LanguageTree:node_for_range()| gets anonymous and named nodes for a
     range.
+  • |vim.treesitter.get_node()| now takes an option `include_anonymous`, default
+    false, which allows it to return anonymous nodes as well as named nodes.
 
 • TUI:
   • Builtin TUI can now recognize "super" (|<D-|) and "meta" (|<T-|) modifiers
