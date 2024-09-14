@@ -120,6 +120,7 @@ end
 ---@param encoding string|nil utf-8|utf-16|utf-32|nil defaults to utf-16
 ---@return integer `encoding` index of `index` in `line`
 function M._str_utfindex_enc(line, index, encoding)
+  local len32, len16 = vim.str_utfindex(line)
   if not encoding then
     encoding = 'utf-16'
   end
@@ -130,9 +131,15 @@ function M._str_utfindex_enc(line, index, encoding)
       return #line
     end
   elseif encoding == 'utf-16' then
+    if not index or index > len16 then
+      return len16
+    end
     local _, col16 = vim.str_utfindex(line, index)
     return col16
   elseif encoding == 'utf-32' then
+    if not index or index > len32 then
+      return len32
+    end
     local col32, _ = vim.str_utfindex(line, index)
     return col32
   else
@@ -148,6 +155,12 @@ end
 ---@param encoding string utf-8|utf-16|utf-32| defaults to utf-16
 ---@return integer byte (utf-8) index of `encoding` index `index` in `line`
 function M._str_byteindex_enc(line, index, encoding)
+  local len = #line
+  if index > len then
+    -- LSP spec: if character > line length, default to the line length.
+    -- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position
+    return len
+  end
   if not encoding then
     encoding = 'utf-16'
   end
@@ -155,7 +168,7 @@ function M._str_byteindex_enc(line, index, encoding)
     if index then
       return index
     else
-      return #line
+      return len
     end
   elseif encoding == 'utf-16' then
     return vim.str_byteindex(line, index, true)
@@ -165,9 +178,6 @@ function M._str_byteindex_enc(line, index, encoding)
     error('Invalid encoding: ' .. vim.inspect(encoding))
   end
 end
-
-local _str_utfindex_enc = M._str_utfindex_enc
-local _str_byteindex_enc = M._str_byteindex_enc
 
 --- Replaces text in a range with new text.
 ---
@@ -333,12 +343,7 @@ local function get_line_byte_from_position(bufnr, position, offset_encoding)
   -- character
   if col > 0 then
     local line = get_line(bufnr, position.line) or ''
-    local ok, result
-    ok, result = pcall(_str_byteindex_enc, line, col, offset_encoding)
-    if ok then
-      return result
-    end
-    return math.min(#line, col)
+    return M._str_byteindex_enc(line, col, offset_encoding or 'utf-16')
   end
   return col
 end
@@ -495,14 +500,15 @@ function M.apply_text_edits(text_edits, bufnr, offset_encoding)
         e.end_col = last_line_len
         has_eol_text_edit = true
       else
-        -- If the replacement is over the end of a line (i.e. e.end_col is out of bounds and the
+        -- If the replacement is over the end of a line (i.e. e.end_col is equal to the line length and the
         -- replacement text ends with a newline We can likely assume that the replacement is assumed
         -- to be meant to replace the newline with another newline and we need to make sure this
         -- doesn't add an extra empty line. E.g. when the last line to be replaced contains a '\r'
         -- in the file some servers (clangd on windows) will include that character in the line
         -- while nvim_buf_set_text doesn't count it as part of the line.
         if
-          e.end_col > last_line_len
+          e.end_col >= last_line_len
+          and text_edit.range['end'].character > e.end_col
           and #text_edit.newText > 0
           and string.sub(text_edit.newText, -1) == '\n'
         then
@@ -2039,7 +2045,7 @@ local function make_position_param(window, offset_encoding)
     return { line = 0, character = 0 }
   end
 
-  col = _str_utfindex_enc(line, col, offset_encoding)
+  col = M._str_utfindex_enc(line, col, offset_encoding)
 
   return { line = row, character = col }
 end
@@ -2221,11 +2227,7 @@ function M.character_offset(buf, row, col, offset_encoding)
     )
     offset_encoding = vim.lsp.get_clients({ bufnr = buf })[1].offset_encoding
   end
-  -- If the col is past the EOL, use the line length.
-  if col > #line then
-    return _str_utfindex_enc(line, nil, offset_encoding)
-  end
-  return _str_utfindex_enc(line, col, offset_encoding)
+  return M._str_utfindex_enc(line, col, offset_encoding)
 end
 
 --- Helper function to return nested values in language server settings
