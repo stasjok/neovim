@@ -21,12 +21,16 @@ describe('treesitter utils', function()
       parser = vim.treesitter.get_parser(0, "c")
       tree = parser:parse()[1]
       root = tree:root()
-      ancestor = root:child(0)
-      child = ancestor:child(0)
+      ancestor = assert(root:child(0))
+      child = assert(ancestor:named_child(1))
+      child_sibling = assert(ancestor:named_child(2))
+      grandchild = assert(child:named_child(0))
     ]])
 
     eq(true, exec_lua('return vim.treesitter.is_ancestor(ancestor, child)'))
+    eq(true, exec_lua('return vim.treesitter.is_ancestor(ancestor, grandchild)'))
     eq(false, exec_lua('return vim.treesitter.is_ancestor(child, ancestor)'))
+    eq(false, exec_lua('return vim.treesitter.is_ancestor(child, child_sibling)'))
   end)
 
   it('can detect if a position is contained in a node', function()
