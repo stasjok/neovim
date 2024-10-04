@@ -316,6 +316,9 @@ The following new features were added.
     |vim.list_contains()| for checking list-like tables (integer keys without
     gaps) for literal values.)
   • |vim.region()| can use a string accepted by |getpos()| as position.
+  • Command-line completions for: `vim.g`, `vim.t`, `vim.w`, `vim.b`, `vim.v`,
+    `vim.o`, `vim.wo`, `vim.bo`, `vim.opt`, `vim.opt_local`, `vim.opt_global`,
+    and `vim.fn`.
 
 • Options:
   • 'winfixbuf' keeps a window focused onto a specific buffer
