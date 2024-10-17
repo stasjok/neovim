@@ -203,6 +203,13 @@
               postPatch = ''
                 ${prevAttrs.postPatch}
                 sed -i '/NVIM_VERSION_PRERELEASE/s/".*"/"${prerelease}"/' CMakeLists.txt
+
+                # Since matchit is already enabled by default, move it to runtime
+                # It'll reduce a number of entries in rtp
+                for d in runtime/pack/dist/opt/matchit/*; do
+                  mv -vt runtime/''${d##*/} $d/*
+                done
+                rm -r runtime/pack/dist/opt/matchit
               '';
 
               # Tree-sitter parsers inherit neovim version in the default builder
