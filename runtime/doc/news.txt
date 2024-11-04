@@ -208,6 +208,7 @@ The following new features were added.
     • |[t|, |]t|, |[T|, |]T|, |[CTRL-T|, |]CTRL-T| navigate through the |tag-matchlist|
     • |[a|, |]a|, |[A|, |]A| navigate through the |argument-list|
     • |[b|, |]b|, |[B|, |]B| navigate through the |buffer-list|
+    • |[<Space>|, |]<Space>| add an empty line above and below the cursor
   • Automatic linting of treesitter query files (see |ft-query-plugin|).
     Can be disabled via: >lua
       vim.g.query_lint_on = {}
